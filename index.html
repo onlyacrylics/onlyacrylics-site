@@ -3,80 +3,537 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="onlyAcrylics — custom acrylic cutting and signage in Singapore. Fast quotes, local fabrication, professional service.">
+<meta name="description" content="onlyAcrylics — Custom acrylic cutting and signage in Singapore. Fast quotes, local fabrication.">
 <title>onlyAcrylics — Custom acrylic, Singapore</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f7f5f0;
-    color: #1a1a1a;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    line-height: 1.6;
-  }
-  .wrap { max-width: 560px; text-align: center; }
-  h1 {
-    font-size: 48px;
-    font-weight: 600;
-    letter-spacing: -1px;
-    margin-bottom: 16px;
-  }
-  .tag {
-    font-size: 18px;
-    color: #555;
-    margin-bottom: 48px;
-  }
-  .pill {
-    display: inline-block;
-    padding: 8px 16px;
-    background: #1a1a1a;
-    color: #f7f5f0;
-    border-radius: 999px;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    margin-bottom: 32px;
-  }
-  .desc {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 40px;
-  }
-  .contact {
-    border-top: 1px solid #ddd;
-    padding-top: 32px;
-    font-size: 14px;
-    color: #666;
-  }
-  .contact a {
-    color: #1a1a1a;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  .contact a:hover { text-decoration: underline; }
-  @media (max-width: 600px) {
-    h1 { font-size: 36px; }
-    .tag { font-size: 16px; }
-  }
+:root {
+  --bg:     #f7f5f0;
+  --bg2:    #f0ede6;
+  --bg3:    #e8e4db;
+  --text:   #1a1a1a;
+  --text2:  #555;
+  --text3:  #999;
+  --border: rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.14);
+  --black:  #111;
+  --green:  #1a6644;
+  --green2: #f0faf4;
+  --red:    #c0392b;
+  --red2:   #fdf0ef;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,245,240,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:54px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.nav-cta{
+  padding:8px 20px;background:var(--black);color:#fff;
+  border:none;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.2px;
+  transition:opacity .15s;
+}
+.nav-cta:hover{opacity:.82;}
+
+/* ── HERO ── */
+.hero{
+  max-width:660px;margin:0 auto;
+  padding:72px 24px 56px;text-align:center;
+}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:20px;
+  background:var(--black);color:#fff;
+  font-size:12px;font-weight:500;
+  font-family:'Syne',sans-serif;
+  letter-spacing:.3px;margin-bottom:22px;
+}
+.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;flex-shrink:0;}
+h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(36px,6vw,56px);
+  font-weight:800;line-height:1.1;
+  letter-spacing:-1.5px;margin-bottom:18px;
+  color:var(--text);
+}
+h1 em{font-style:italic;font-weight:400;}
+.hero-sub{
+  font-size:16px;color:var(--text2);
+  line-height:1.75;margin-bottom:36px;
+  max-width:480px;margin-left:auto;margin-right:auto;
+}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{
+  padding:13px 32px;background:var(--black);color:#fff;
+  border:none;border-radius:10px;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:'Syne',sans-serif;
+  transition:opacity .15s,transform .1s;
+}
+.btn-primary:hover{opacity:.85;}
+.btn-primary:active{transform:scale(.97);}
+.btn-secondary{
+  padding:13px 24px;background:transparent;color:var(--text);
+  border:1.5px solid var(--border2);border-radius:10px;font-size:14px;
+  cursor:pointer;font-family:'Instrument Sans',sans-serif;
+  transition:background .15s;
+}
+.btn-secondary:hover{background:var(--bg2);}
+
+/* ── HOW IT WORKS ── */
+.how{
+  max-width:860px;margin:0 auto;padding:0 24px 64px;
+}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.how-card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:12px;padding:22px;
+}
+.how-num{
+  width:28px;height:28px;border-radius:8px;
+  background:var(--black);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
+  margin-bottom:14px;
+}
+.how-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;margin-bottom:6px;}
+.how-desc{font-size:13px;color:var(--text2);line-height:1.65;}
+
+/* ── MATERIALS ── */
+.mats{
+  background:var(--bg2);border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:40px 24px;margin-bottom:0;
+}
+.mats-inner{max-width:860px;margin:0 auto;}
+.mats-label{
+  font-family:'Syne',sans-serif;font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:1px;
+  color:var(--text3);margin-bottom:14px;
+}
+.mats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.mat-card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:8px;padding:12px 10px;text-align:center;
+}
+.mat-swatch{height:32px;border-radius:5px;margin-bottom:8px;border:1px solid var(--border);}
+.mat-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--text);}
+.mat-desc{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.4;}
+
+/* ── QUOTE FORM ── */
+#quote-section{
+  max-width:640px;margin:0 auto;
+  padding:56px 24px 80px;
+}
+.form-card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 2px 24px rgba(0,0,0,0.05);
+}
+.form-header{
+  padding:24px 28px 20px;
+  border-bottom:1px solid var(--border);
+}
+.form-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px;}
+.form-sub{font-size:13px;color:var(--text2);}
+.form-body{padding:24px 28px;}
+
+.step-bar{
+  display:flex;align-items:center;margin-bottom:28px;
+}
+.step-dot{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  flex-shrink:0;transition:all .2s;
+}
+.step-dot.done{background:var(--black);color:#fff;}
+.step-dot.active{background:var(--black);color:#fff;box-shadow:0 0 0 3px rgba(0,0,0,0.1);}
+.step-dot.todo{background:var(--bg2);color:var(--text3);border:1px solid var(--border);}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 6px;}
+.step-line.done{background:var(--black);}
+.step-lbl{font-size:10px;color:var(--text3);margin-top:4px;white-space:nowrap;font-family:'Syne',sans-serif;letter-spacing:.3px;}
+
+.field-label{
+  font-size:11px;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.6px;
+  margin-bottom:7px;font-family:'Syne',sans-serif;
+}
+.field-inp{
+  width:100%;padding:11px 14px;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:9px;font-size:14px;color:var(--text);
+  font-family:'Instrument Sans',sans-serif;
+  outline:none;transition:border-color .15s,box-shadow .15s;
+  margin-bottom:16px;
+}
+.field-inp:focus{border-color:var(--black);box-shadow:0 0 0 3px rgba(0,0,0,0.06);}
+.field-inp::placeholder{color:var(--text3);}
+textarea.field-inp{resize:vertical;min-height:90px;line-height:1.6;}
+
+.method-row{display:flex;gap:8px;margin-bottom:16px;}
+.method-btn{
+  flex:1;padding:11px;border-radius:9px;
+  border:1.5px solid var(--border);background:var(--bg);
+  font-size:13px;cursor:pointer;font-family:'Syne',sans-serif;
+  font-weight:500;color:var(--text2);transition:all .15s;
+}
+.method-btn.on{background:var(--black);color:#fff;border-color:var(--black);}
+
+.upload-zone{
+  border:2px dashed var(--border2);border-radius:10px;
+  padding:28px 20px;text-align:center;cursor:pointer;
+  background:var(--bg);transition:all .15s;margin-bottom:16px;
+}
+.upload-zone:hover{border-color:var(--black);background:var(--bg2);}
+.upload-zone.has-file{border-color:#1a6644;background:var(--green2);border-style:solid;}
+.upload-icon{font-size:24px;margin-bottom:8px;opacity:.4;}
+.upload-txt{font-size:13px;color:var(--text2);}
+.upload-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+
+.form-err{
+  background:var(--red2);border:1px solid rgba(192,57,43,0.2);
+  border-radius:8px;padding:10px 13px;font-size:13px;
+  color:var(--red);margin-bottom:14px;display:none;
+}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+.form-back{
+  padding:10px 20px;background:transparent;
+  border:1.5px solid var(--border2);border-radius:9px;
+  font-size:13px;cursor:pointer;color:var(--text2);
+  font-family:'Instrument Sans',sans-serif;transition:all .15s;
+}
+.form-back:hover{background:var(--bg2);}
+.form-next{
+  padding:10px 28px;background:var(--black);color:#fff;
+  border:none;border-radius:9px;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:'Syne',sans-serif;
+  transition:opacity .15s;min-width:120px;
+}
+.form-next:hover{opacity:.84;}
+.form-next:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Review rows */
+.review-row{
+  display:flex;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  font-size:13px;gap:12px;
+}
+.review-row:last-child{border-bottom:none;}
+.review-lbl{color:var(--text3);}
+.review-val{color:var(--text);font-weight:500;text-align:right;}
+
+/* Success */
+.success-wrap{
+  text-align:center;padding:40px 20px;
+}
+.success-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--green2);border:1px solid rgba(26,102,68,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin:0 auto 16px;
+}
+.success-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin-bottom:8px;}
+.success-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:340px;margin:0 auto 24px;}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--black);color:#fff;
+  padding:32px 24px;text-align:center;
+}
+.footer-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;}
+.footer-links{font-size:13px;color:#888;margin-bottom:4px;}
+.footer-links a{color:#aaa;text-decoration:none;}
+.footer-links a:hover{color:#fff;}
+
+@media(max-width:640px){
+  .how-grid{grid-template-columns:1fr;}
+  .mats-grid{grid-template-columns:repeat(3,1fr);}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="pill">Launching soon</div>
-  <h1>onlyAcrylics</h1>
-  <p class="tag">Custom acrylic cutting & signage, Singapore</p>
-  <p class="desc">
-    Fast quotes. Local fabrication. From retail displays to anything cool you may have in mind —
-    we make your ideations come true! Stay tuned for our full site soon!
-  </p>
-  <div class="contact">
-    For enquiries while we build:<br>
-    <a href="https://wa.me/6589962208">WhatsApp +65 8996 2208</a> · <a href="mailto:hello@onlyacrylics.sg">hello@onlyacrylics.sg</a>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">onlyAcrylics</div>
+  <button class="nav-cta" onclick="scrollToQuote()">Get a quote</button>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-pill"><span class="hero-pill-dot"></span>Singapore · Fast turnaround</div>
+  <h1>Custom acrylic,<br><em>cut to your design.</em></h1>
+  <p class="hero-sub">From retail displays to signage to anything you can imagine — we cut, you create. Submit your design and get a quote within hours.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="scrollToQuote()">Get a free quote →</button>
+    <button class="btn-secondary" onclick="scrollToQuote()">See how it works</button>
   </div>
 </div>
+
+<!-- ── HOW IT WORKS ── -->
+<div class="how">
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">1</div>
+      <div class="how-title">Submit your design</div>
+      <div class="how-desc">Describe what you need or upload a sketch. No CAD experience needed.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">2</div>
+      <div class="how-title">We quote you</div>
+      <div class="how-desc">We review and send you a price via Telegram or WhatsApp within hours.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">3</div>
+      <div class="how-title">Pay & we deliver</div>
+      <div class="how-desc">Pay via PayNow. Your acrylic is cut and delivered island-wide in 3–5 days.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MATERIALS ── -->
+<div class="mats">
+  <div class="mats-inner">
+    <div class="mats-label">Available materials</div>
+    <div class="mats-grid">
+      <div class="mat-card">
+        <div class="mat-swatch" style="background:rgba(160,210,255,0.5);border-color:rgba(26,122,194,.2)"></div>
+        <div class="mat-name">Clear</div>
+        <div class="mat-desc">Glass-like transparency</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-swatch" style="background:rgba(210,215,220,0.7)"></div>
+        <div class="mat-name">Frosted</div>
+        <div class="mat-desc">Diffused matte finish</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-swatch" style="background:#1a1a1a"></div>
+        <div class="mat-name">Black</div>
+        <div class="mat-desc">Sleek & opaque</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-swatch" style="background:#f5f5f5"></div>
+        <div class="mat-name">White</div>
+        <div class="mat-desc">Clean & opaque</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#silver,#c0c0c0,#e8e8e8);background:#d4d4d4"></div>
+        <div class="mat-name">Mirror</div>
+        <div class="mat-desc">Reflective surface</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#ff6b6b,#ffa07a,#4ecdc4)"></div>
+        <div class="mat-name">Coloured</div>
+        <div class="mat-desc">Custom tints</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── QUOTE FORM ── -->
+<div id="quote-section">
+  <div class="form-card">
+    <div class="form-header">
+      <div class="form-title">Request a quote</div>
+      <div class="form-sub">Fill in your details and we'll get back to you shortly.</div>
+    </div>
+    <div class="form-body" id="form-body">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">onlyAcrylics</div>
+  <div class="footer-links">
+    <a href="https://wa.me/6589962208">WhatsApp +65 8996 2208</a> ·
+    <a href="mailto:hello@onlyacrylics.sg">hello@onlyacrylics.sg</a>
+  </div>
+  <div style="font-size:11px;color:#555;margin-top:6px">© 2025 onlyAcrylics Singapore</div>
+</footer>
+
+<script>
+// ══════════════════════════════════════
+// CONFIG — same Supabase project as admin
+// ══════════════════════════════════════
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+
+let sb;
+try { sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON); } catch(e) {}
+
+// ── State ──────────────────────────────
+let step = 1; // 1=design 2=contact 3=review 4=success
+let form = { dims:'', file:null, fileName:'', contact:'', method:'telegram' };
+
+function scrollToQuote() {
+  document.getElementById('quote-section').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Render ─────────────────────────────
+function render() {
+  const body = document.getElementById('form-body');
+  body.innerHTML = stepBar() + stepContent();
+}
+
+function stepBar() {
+  const steps = ['Design','Contact','Confirm'];
+  let h = '<div class="step-bar">';
+  steps.forEach((s, i) => {
+    const n = i + 1;
+    const cls = n < step ? 'done' : n === step ? 'active' : 'todo';
+    h += `<div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <div class="step-dot ${cls}">${n < step ? '✓' : n}</div>
+      <div class="step-lbl">${s}</div>
+    </div>`;
+    if (i < 2) h += `<div class="step-line${n < step ? ' done' : ''}" style="margin-bottom:18px"></div>`;
+  });
+  return h + '</div>';
+}
+
+function stepContent() {
+  if (step === 1) return `
+    <div>
+      <div class="field-label">Describe your design</div>
+      <textarea class="field-inp" id="f-dims" placeholder="e.g. 300×200mm clear acrylic, 5mm thick, 4× mounting holes at corners. Or just describe it in plain language — we'll work it out.">${form.dims}</textarea>
+      <div class="field-label">Upload a sketch or reference (optional)</div>
+      <div class="upload-zone${form.fileName?' has-file':''}" onclick="document.getElementById('f-file').click()" id="upload-zone">
+        <div class="upload-icon">${form.fileName ? '✓' : '📎'}</div>
+        <div class="upload-txt">${form.fileName || 'Click to upload image or PDF'}</div>
+        <div class="upload-hint">${form.fileName ? 'Click to change file' : 'JPG, PNG, PDF — max 10MB'}</div>
+      </div>
+      <input type="file" id="f-file" accept="image/*,.pdf" style="display:none" onchange="handleFile(this)">
+      <div class="form-actions">
+        <button class="form-next" onclick="goStep2()">Continue →</button>
+      </div>
+    </div>`;
+
+  if (step === 2) return `
+    <div>
+      <div class="field-label">How should we contact you?</div>
+      <div class="method-row">
+        <button class="method-btn${form.method==='telegram'?' on':''}" onclick="setMethod('telegram')">✈ Telegram</button>
+        <button class="method-btn${form.method==='whatsapp'?' on':''}" onclick="setMethod('whatsapp')">📱 WhatsApp</button>
+      </div>
+      <div class="field-label">${form.method==='telegram'?'Your Telegram username':'Your WhatsApp number'}</div>
+      <input class="field-inp" id="f-contact" type="text"
+        placeholder="${form.method==='telegram'?'@yourusername':'e.g. 91234567'}"
+        value="${form.contact}">
+      <div class="form-err" id="contact-err">Please enter your contact details.</div>
+      <p style="font-size:12px;color:var(--text3);margin-top:-8px;margin-bottom:0;line-height:1.6">
+        We'll send you a confirmation message right away, then follow up with a price.
+      </p>
+      <div class="form-actions">
+        <button class="form-back" onclick="step=1;render()">← Back</button>
+        <button class="form-next" onclick="goStep3()">Continue →</button>
+      </div>
+    </div>`;
+
+  if (step === 3) return `
+    <div>
+      <div style="background:var(--bg);border-radius:10px;padding:4px 0;margin-bottom:18px">
+        <div class="review-row"><span class="review-lbl">Contact</span><span class="review-val">${form.method === 'telegram' ? 'Telegram' : 'WhatsApp'}: ${form.contact}</span></div>
+        ${form.dims ? `<div class="review-row"><span class="review-lbl">Description</span><span class="review-val" style="max-width:280px">${form.dims}</span></div>` : ''}
+        ${form.fileName ? `<div class="review-row"><span class="review-lbl">File</span><span class="review-val">📎 ${form.fileName}</span></div>` : ''}
+      </div>
+      <div style="background:#f0faf4;border:1px solid rgba(26,102,68,.15);border-radius:9px;padding:12px 14px;font-size:13px;color:var(--green);line-height:1.65;margin-bottom:18px">
+        After submitting, we'll send you an acknowledgement on ${form.method === 'telegram' ? 'Telegram' : 'WhatsApp'} within minutes, then message you a price once we've reviewed your design.
+      </div>
+      <div class="form-err" id="submit-err"></div>
+      <div class="form-actions">
+        <button class="form-back" onclick="step=2;render()">← Back</button>
+        <button class="form-next" id="submit-btn" onclick="submitQuote()">Submit request</button>
+      </div>
+    </div>`;
+
+  if (step === 4) return `
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Request submitted!</div>
+      <div class="success-sub">
+        We've received your quote request and will be in touch on ${form.method === 'telegram' ? 'Telegram' : 'WhatsApp'} shortly.<br><br>
+        <strong>${form.contact}</strong>
+      </div>
+      <button class="btn-primary" onclick="resetForm()">Submit another request</button>
+    </div>`;
+}
+
+// ── Actions ────────────────────────────
+function handleFile(input) {
+  const f = input.files[0];
+  if (!f) return;
+  form.file = f;
+  form.fileName = f.name;
+  render();
+}
+
+function setMethod(m) {
+  form.method = m;
+  render();
+  setTimeout(() => { const el = document.getElementById('f-contact'); if (el) el.focus(); }, 50);
+}
+
+function goStep2() {
+  form.dims = document.getElementById('f-dims')?.value || '';
+  step = 2; render();
+}
+
+function goStep3() {
+  const c = document.getElementById('f-contact')?.value.trim();
+  if (!c) { document.getElementById('contact-err').style.display = 'block'; return; }
+  form.contact = c;
+  step = 3; render();
+}
+
+async function submitQuote() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  try {
+    if (!sb || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+      // Demo mode — simulate success
+      await new Promise(r => setTimeout(r, 800));
+      step = 4; render(); return;
+    }
+
+    const payload = {
+      contact: form.contact,
+      method:  form.method,
+      dims:    form.dims || null,
+      status:  'pending',
+      file_name: form.fileName || null,
+    };
+
+    const { error } = await sb.from('quotes').insert([payload]);
+    if (error) throw error;
+
+    step = 4; render();
+  } catch (err) {
+    console.error(err);
+    const errEl = document.getElementById('submit-err');
+    if (errEl) { errEl.textContent = 'Something went wrong. Please try WhatsApp instead: +65 8996 2208'; errEl.style.display = 'block'; }
+    btn.disabled = false; btn.textContent = 'Submit request';
+  }
+}
+
+function resetForm() {
+  form = { dims:'', file:null, fileName:'', contact:'', method:'telegram' };
+  step = 1; render();
+}
+
+// ── Init ───────────────────────────────
+render();
+</script>
 </body>
 </html>
